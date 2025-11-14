@@ -84,6 +84,43 @@ section[data-testid="stSidebar"] h3 {
     color: #ffffff !important;
 }
 
+
+/* Membuat background TAB CONTAINER abu-abu full */
+.stTabs [role="tablist"] {
+    background-color: #eeeeee !important;  /* abu-abu */
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Warna tab saat tidak dipilih */
+.stTabs [role="tab"] {
+    background-color: transparent !important;
+    padding: 10px 16px !important;
+    border-radius: 6px !important;
+}
+
+/* Warna tab yang dipilih */
+.stTabs [aria-selected="true"] {
+    background-color: #d0d0d0 !important;
+    font-weight: 600 !important;
+}
+
+/* Hover */
+.stTabs [role="tab"]:hover {
+    background-color: #e2e2e2 !important;
+}
+            
+/* Jika KPI card memakai st.columns, beri jarak juga */
+[data-testid="column"] {
+    margin-bottom: 25px !important;
+}
+
+/* SPASI DI BAWAH KPI CARD */
+.kpi-section {
+    margin-bottom: 35px !important;
+}
+
+
 </style>""", unsafe_allow_html=True)
 
 # ==================== FUNGSI PEMBERSIHAN ====================
@@ -184,7 +221,7 @@ st.markdown("""
 
 # ==================== SIDEBAR FILTER ====================
 with st.sidebar:
-    st.header("🔍 Filter Data")
+    st.header("Filter Data")
     provinces = df_profile["province"].dropna().unique()
     genders = df_profile["gender"].dropna().unique()
     selected_prov = st.selectbox("Pilih Provinsi", ["Semua"] + list(provinces))
@@ -198,7 +235,7 @@ with st.sidebar:
         border-radius: 10px;
         color: white;
     ">
-        <h4 style="margin-bottom: 10px; color: #ffffff;">👥 Dibuat oleh:</h4>
+        <h4 style="margin-bottom: 10px; color: #ffffff;">Dibuat oleh:</h4>
         <ul style="margin: 0; padding-left: 20px; color: #e8eefc;">
             <li>Evinda Eka Ayudia Lestari</li>
             <li>R. Aj Maria Shovia Fadinda</li>
@@ -213,23 +250,51 @@ if selected_gender != "Semua":
     df_filtered = df_filtered[df_filtered["gender"] == selected_gender]
 
 # ==================== QUICK STATS ====================
+st.markdown('<div class="kpi-section">', unsafe_allow_html=True)
+
 col1, col2, col3, col4 = st.columns(4)
-col1.markdown(f"<div class='stat-card'><div class='stat-label'>Jumlah Responden</div><div class='stat-value'>{len(df_filtered)}</div></div>", unsafe_allow_html=True)
-col2.markdown(f"<div class='stat-card'><div class='stat-label'>Rata-rata Usia</div><div class='stat-value'>{df_filtered['birth_year'].apply(lambda x: 2025-x).mean():.1f}</div></div>", unsafe_allow_html=True)
-col3.markdown(f"<div class='stat-card'><div class='stat-label'>Pendapatan Rata-rata</div><div class='stat-value'>Rp {df_filtered['avg_monthly_income'].mean():,.0f}</div></div>", unsafe_allow_html=True)
-col4.markdown(f"<div class='stat-card'><div class='stat-label'>Pengeluaran Rata-rata</div><div class='stat-value'>Rp {df_filtered['avg_monthly_expense'].mean():,.0f}</div></div>", unsafe_allow_html=True)
+
+col1.markdown(f"""
+<div class='stat-card'>
+    <div class='stat-label'>Jumlah Responden</div>
+    <div class='stat-value'>{len(df_filtered)}</div>
+</div>
+""", unsafe_allow_html=True)
+
+col2.markdown(f"""
+<div class='stat-card'>
+    <div class='stat-label'>Rata-rata Usia</div>
+    <div class='stat-value'>{df_filtered['birth_year'].apply(lambda x: 2025-x).mean():.1f}</div>
+</div>
+""", unsafe_allow_html=True)
+
+col3.markdown(f"""
+<div class='stat-card'>
+    <div class='stat-label'>Pendapatan Rata-rata</div>
+    <div class='stat-value'>Rp {df_filtered['avg_monthly_income'].mean():,.0f}</div>
+</div>
+""", unsafe_allow_html=True)
+
+col4.markdown(f"""
+<div class='stat-card'>
+    <div class='stat-label'>Pengeluaran Rata-rata</div>
+    <div class='stat-value'>Rp {df_filtered['avg_monthly_expense'].mean():,.0f}</div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ==================== TABS ====================
 tab1, tab2, tab3, tab4 = st.tabs([
-    "🏠 Ringkasan Umum",
-    "💰 Profil Keuangan",
-    "🧠 Literasi & Perilaku Keuangan",
-    "📊 Indikator Ekonomi Regional"
+    "Ringkasan Umum",
+    "Profil Keuangan",
+    "Literasi & Perilaku Keuangan",
+    "Indikator Ekonomi Regional"
 ])
 
 # ==================== TAB 1: RINGKASAN UMUM ====================
 with tab1:
-    st.markdown('<div class="section-header"><h3>🗺 Distribusi Responden per Provinsi</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><h3>Distribusi Responden per Provinsi</h3></div>', unsafe_allow_html=True)
     
     # Hitung jumlah responden per provinsi
     prov_count = df_filtered["province"].value_counts().reset_index()
@@ -257,7 +322,7 @@ with tab1:
     st.plotly_chart(fig_prov, use_container_width=True)
 
     # ==================== Distribusi Gender dan Pekerjaan ====================
-    st.markdown('<div class="section-header"><h3>👥 Komposisi Demografis Responden</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><h3>Komposisi Demografis Responden</h3></div>', unsafe_allow_html=True)
     col_demo1, col_demo2 = st.columns(2)
     
     with col_demo1:
@@ -319,7 +384,7 @@ with tab2:
         x="Jumlah",
         color="Jenis",
         nbins=20,
-        barmode="group",    # 👈 histogram berdampingan
+        barmode="group",
         opacity=0.75,
         color_discrete_map={
             "avg_monthly_income": "#1e3c72",
@@ -336,7 +401,7 @@ with tab2:
     st.plotly_chart(fig_hist, use_container_width=True)
 
     # Pendapatan & Pengeluaran per Provinsi
-    st.markdown('<div class="section-header"><h3>📊 Pendapatan dan Pengeluaran Rata-rata per Provinsi</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><h3>Pendapatan dan Pengeluaran Rata-rata per Provinsi</h3></div>', unsafe_allow_html=True)
     df_avg = (
         df_filtered.groupby("province")[["avg_monthly_income", "avg_monthly_expense"]]
         .mean()
@@ -373,7 +438,7 @@ with tab2:
 
     # 🔸 Dua grafik berdampingan: Pengeluaran per Gender dan Penggunaan E-Wallet
     if "gender" in df_filtered.columns or "main_fintech_app" in df_filtered.columns:
-        st.markdown('<div class="section-header"><h3>🚻 Rata-rata Pengeluaran per Gender & Penggunaan E-Wallet</h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header"><h3>Rata-rata Pengeluaran per Gender & Penggunaan E-Wallet</h3></div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
 
         # Grafik 1: Pengeluaran per Gender
@@ -502,7 +567,7 @@ with tab3:
         # Ringkasan umum
         st.markdown(f"""
         <div class='insight-box'>
-            <h4>📚 Rangkuman Literasi Keuangan</h4>
+            <h4>Rangkuman Literasi Keuangan</h4>
             <p>Rata-rata skor literasi keuangan responden adalah <b>{avg_literacy:.2f}</b> dari 4.</p>
             <p>Nilai ini mencerminkan tingkat pemahaman Gen Z terhadap konsep, risiko, dan produk keuangan digital.</p>
         </div>
@@ -642,7 +707,7 @@ with tab3:
         # ==================== VISUALISASI ====================
         st.markdown(f"""
         <div class='insight-box'>
-            <h4>💰 Rangkuman Perilaku & Pengambilan Keputusan Keuangan</h4>
+            <h4>Rangkuman Perilaku & Pengambilan Keputusan Keuangan</h4>
             <p>Rata-rata skor adalah <b>{avg_behavior:.2f}</b> dari 4.</p>
             <p>Menunjukkan sejauh mana Gen Z menerapkan kebiasaan keuangan sehat dan kemampuan mengambil keputusan finansial yang bijak.</p>
         </div>
@@ -684,7 +749,7 @@ with tab3:
 # ==================== TAB 4 : INTEGRASI & ANALISIS LANJUT ====================
 with tab4:
 
-    st.markdown('<div class="section-header"><h3>📊 Analisis Lanjutan & Integrasi Dataset</h3></div>', 
+    st.markdown('<div class="section-header"><h3>Analisis Lanjutan & Integrasi Dataset</h3></div>', 
                 unsafe_allow_html=True)
 
     # =========================================================
@@ -761,7 +826,7 @@ with tab4:
     # =========================================================
     # 1. PDRB vs Outstanding Pinjaman
     # =========================================================
-    st.subheader("🔵 PDRB vs Outstanding Pinjaman")
+    st.subheader("PDRB vs Outstanding Pinjaman")
 
     if not df_regional_clean.empty:
         fig1 = px.scatter(
@@ -785,7 +850,7 @@ with tab4:
     # =========================================================
     # 2. Urbanisasi vs Jumlah Dana yang Diberikan
     # =========================================================
-    st.subheader("🔵 Urbanisasi vs Dana yang Diberikan")
+    st.subheader("Urbanisasi vs Dana yang Diberikan")
 
     df_clean2 = df_regional.dropna(subset=["urbanization_rate", "loan_amount_billion"])
 
@@ -809,7 +874,7 @@ with tab4:
             # =========================================================
     # 3. Integrasi PDRB vs Pendapatan Gen Z (Grouped Bar Chart)
     # =========================================================
-    st.subheader("📌 Integrasi: PDRB vs Pendapatan Rata-rata Gen Z (Bar Chart Gabungan)")
+    st.subheader("Integrasi: PDRB vs Pendapatan Rata-rata Gen Z (Bar Chart Gabungan)")
 
     df_merge_profile = df_regional.merge(df_profile, on="province", how="left")
     df_merge_profile = df_merge_profile.dropna(subset=["pdrb_thousand_rp", "avg_monthly_income"])
@@ -844,7 +909,7 @@ with tab4:
     # =========================================================
     # 4. Integrasi Literasi vs Risiko Kredit (BAR CHART HORIZONTAL)
     # =========================================================
-    st.subheader("📌 Integrasi: Literacy vs Risiko Kredit (TWP 90%) — Bar Chart")
+    st.subheader("Integrasi: Literacy vs Risiko Kredit (TWP 90%) — Bar Chart")
 
     df_merge_literacy = df_regional.merge(df_literacy, on="province", how="left")
     df_merge_literacy = df_merge_literacy.dropna(subset=["literacy_score", "twp_90"])
@@ -876,5 +941,4 @@ with tab4:
 
         st.plotly_chart(fig4, use_container_width=True)
     else:
-
         st.warning("Data tidak cukup untuk menampilkan integrasi Literacy vs Risiko Kredit.")
