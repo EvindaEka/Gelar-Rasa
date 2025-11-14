@@ -108,9 +108,9 @@ def parse_rupiah_range(value):
 @st.cache_data
 def load_data():
     paths = {
-        "profile": "D:/Gelar Rasa/Dashboard Analysis/GenZ_Financial_Profile.csv",
-        "literacy": "D:/Gelar Rasa/Dashboard Analysis/GenZ_Financial_Literacy_Survey.csv",
-        "regional": "D:/Gelar Rasa/Dashboard Analysis/Regional_Economic_Indicators.csv",
+            "profile": "GenZ_Financial_Profile.csv",
+            "literacy": "GenZ_Financial_Literacy_Survey.csv",
+            "regional": "Regional_Economic_Indicators.csv",
     }
 
     def read_file(path):
@@ -876,4 +876,5 @@ with tab4:
 
         st.plotly_chart(fig4, use_container_width=True)
     else:
+
         st.warning("Data tidak cukup untuk menampilkan integrasi Literacy vs Risiko Kredit.")
