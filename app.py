@@ -4,6 +4,7 @@ import numpy as np
 import re
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 
 # ==================== PAGE CONFIG ====================
 st.set_page_config(
@@ -332,7 +333,7 @@ with tab1:
             gender_count,
             values="Jumlah",
             names="Gender",
-            color_discrete_sequence=px.colors.qualitative.Set2,
+            color_discrete_sequence=["#1E3C72", "#A7C7E7"],
             title="Proporsi Jenis Kelamin"
         )
         st.plotly_chart(fig_gender, use_container_width=True)
@@ -346,7 +347,7 @@ with tab1:
                 x="Status Pekerjaan",
                 y="Jumlah",
                 color="Jumlah",
-                color_continuous_scale="Tealgrn",
+                color_continuous_scale="Blues",
                 title="Distribusi Status Pekerjaan"
             )
             fig_job.update_layout(
@@ -385,7 +386,6 @@ with tab2:
         color="Jenis",
         nbins=20,
         barmode="group",
-        opacity=0.75,
         color_discrete_map={
             "avg_monthly_income": "#1e3c72",
             "avg_monthly_expense": "#e74c3c"
@@ -393,9 +393,11 @@ with tab2:
     )
 
     fig_hist.update_layout(
+        title="Distribusi Pendapatan & Pengeluaran",
         xaxis_title="Jumlah (Income / Expense)",
         yaxis_title="Frekuensi",
-        legend_title="Kategori"
+        legend_title="Kategori",
+        title_font_color="#1e3c72"
     )
 
     st.plotly_chart(fig_hist, use_container_width=True)
@@ -420,17 +422,18 @@ with tab2:
         x=df_avg["province"],
         y=df_avg["avg_monthly_expense"],
         name="Pengeluaran Rata-rata",
-        marker_color="#5dade2",  # Lighter blue
+        marker_color="#e74c3c",
         hovertemplate="<b>%{x}</b><br>Pengeluaran: Rp %{y:,.0f}<extra></extra>"
     ))
     fig_income_expense.update_layout(
+        title="Pendapatan dan Pengeluaran Rata-rata per Provinsi",
         barmode="group",
         xaxis_title="Provinsi",
         yaxis_title="Nilai (Rupiah)",
         template="plotly_white",
         legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
         height=650,
-        margin=dict(t=100, b=100),
+        margin=dict(t=80, b=100),
         title_font_color="#1e3c72"
     )
     fig_income_expense.update_xaxes(tickangle=45, tickfont=dict(size=11))
@@ -450,7 +453,7 @@ with tab2:
                     x="gender",
                     y="avg_monthly_expense",
                     color="gender",
-                    color_discrete_sequence=["#1e3c72", "#2a5298", "#5dade2"],
+                    color_discrete_sequence=["#5dade2", "#1e3c72"],
                     title="Rata-rata Pengeluaran Bulanan per Gender"
                 )
                 fig_gender_exp.update_layout(
@@ -494,7 +497,19 @@ with tab2:
         x="avg_monthly_income",
         y="avg_monthly_expense",
         color="gender",
-        trendline="ols"
+        trendline="ols",
+        color_discrete_map={
+        "Female": "#A7C7E7",   # biru muda
+        "Male": "#1e3c72"      # biru tua
+        }
+    )
+
+    fig5.update_layout(
+        title="Hubungan Pendapatan vs Pengeluaran",
+        xaxis_title="Pendapatan Bulanan",
+        yaxis_title="Pengeluaran Bulanan",
+        title_font_color="#1e3c72",
+        template="plotly_white"
     )
 
     st.plotly_chart(fig5, use_container_width=True)
@@ -716,7 +731,7 @@ with tab3:
         fig_beh = px.bar(
             avg_scores_b,
             x="Rata-rata Skor", y="Aspek",
-            orientation="h", color="Rata-rata Skor", color_continuous_scale="Greens",
+            orientation="h", color="Rata-rata Skor", color_continuous_scale="Blues",
             title="Rata-rata Skor per Aspek Perilaku & Keputusan Keuangan"
         )
         fig_beh.update_layout(template="plotly_white", xaxis_title="Skor (1–4)", yaxis_title="")
@@ -748,6 +763,8 @@ with tab3:
 
 # ==================== TAB 4 : INTEGRASI & ANALISIS LANJUT ====================
 with tab4:
+    pio.templates.default = None
+    default_template = "none"
 
     st.markdown('<div class="section-header"><h3>Analisis Lanjutan & Integrasi Dataset</h3></div>', 
                 unsafe_allow_html=True)
@@ -841,7 +858,8 @@ with tab4:
                 "outstanding_billion": "Outstanding Pinjaman (Rp miliar)",
                 "borrowers": "Jumlah Penerima Pinjaman",
                 "urbanization_rate": "Urbanisasi (%)"
-            }
+            },
+            template=default_template
         )
         st.plotly_chart(fig1, use_container_width=True)
     else:
@@ -865,7 +883,8 @@ with tab4:
             labels={
                 "urbanization_rate": "Urbanisasi (%)",
                 "loan_amount_billion": "Dana Diberikan (Rp miliar)"
-            }
+            },
+            template=default_template
         )
         st.plotly_chart(fig2, use_container_width=True)
     else:
@@ -900,7 +919,12 @@ with tab4:
                 "province": "Provinsi",
                 "nilai": "Nilai",
                 "indikator": "Indikator"
-            }
+            },
+            color_discrete_map={
+                "pdrb_thousand_rp": "#1e3c72",       # biru tua
+                "avg_monthly_income": "#5dade2"     # biru muda
+            },
+            template=default_template
         )
         st.plotly_chart(fig3, use_container_width=True)
     else:
@@ -930,7 +954,8 @@ with tab4:
                 "province": "Provinsi",
                 "twp_90": "Risiko Kredit (TWP 90%)"
             },
-            color_continuous_scale="RdYlGn_r"  # Hijau = risiko rendah, Merah = tinggi
+            color_continuous_scale="Blues",
+            template=default_template
         )
 
         fig4.update_layout(
